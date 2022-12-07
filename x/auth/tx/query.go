@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tendermint/tendermint/rpc/coretypes"
+	coretypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -27,11 +27,11 @@ func QueryTxsByEvents(clientCtx client.Context, events []string, page, limit int
 	}
 
 	if page <= 0 {
-		return nil, errors.New("page must greater than 0")
+		return nil, errors.New("page must be greater than 0")
 	}
 
 	if limit <= 0 {
-		return nil, errors.New("limit must greater than 0")
+		return nil, errors.New("limit must be greater than 0")
 	}
 
 	// XXX: implement ANY

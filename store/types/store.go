@@ -5,11 +5,10 @@ import (
 	"io"
 
 	abci "github.com/tendermint/tendermint/abci/types"
-	tmstrings "github.com/tendermint/tendermint/libs/strings"
 	dbm "github.com/tendermint/tm-db"
 
-	pruningtypes "github.com/cosmos/cosmos-sdk/pruning/types"
-	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
+	pruningtypes "github.com/cosmos/cosmos-sdk/store/pruning/types"
+	snapshottypes "github.com/cosmos/cosmos-sdk/store/snapshots/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 )
 
@@ -64,7 +63,12 @@ func (s *StoreUpgrades) IsAdded(key string) bool {
 	if s == nil {
 		return false
 	}
-	return tmstrings.StringInSlice(key, s.Added)
+	for _, added := range s.Added {
+		if key == added {
+			return true
+		}
+	}
+	return false
 }
 
 // IsDeleted returns true if the given key should be deleted
@@ -124,12 +128,8 @@ type MultiStore interface {
 	// tracing operations. The modified MultiStore is returned.
 	SetTracingContext(TraceContext) MultiStore
 
-	// ListeningEnabled returns if listening is enabled for the KVStore belonging the provided StoreKey
-	ListeningEnabled(key StoreKey) bool
-
-	// AddListeners adds WriteListeners for the KVStore belonging to the provided StoreKey
-	// It appends the listeners to a current set, if one already exists
-	AddListeners(key StoreKey, listeners []WriteListener)
+	// LatestVersion returns the latest version in the store
+	LatestVersion() int64
 }
 
 // From MultiStore.CacheMultiStore()....
@@ -184,6 +184,19 @@ type CommitMultiStore interface {
 
 	// SetIAVLCacheSize sets the cache size of the IAVL tree.
 	SetIAVLCacheSize(size int)
+
+	// SetIAVLDisableFastNode enables/disables fastnode feature on iavl.
+	SetIAVLDisableFastNode(disable bool)
+
+	// RollbackToVersion rollback the db to specific version(height).
+	RollbackToVersion(version int64) error
+
+	// ListeningEnabled returns if listening is enabled for the KVStore belonging the provided StoreKey
+	ListeningEnabled(key StoreKey) bool
+
+	// AddListeners adds WriteListeners for the KVStore belonging to the provided StoreKey
+	// It appends the listeners to a current set, if one already exists
+	AddListeners(key StoreKey, listeners []WriteListener)
 }
 
 //---------subsp-------------------------------
@@ -260,9 +273,6 @@ type CacheWrap interface {
 
 	// CacheWrapWithTrace recursively wraps again with tracing enabled.
 	CacheWrapWithTrace(w io.Writer, tc TraceContext) CacheWrap
-
-	// CacheWrapWithListeners recursively wraps again with listening enabled
-	CacheWrapWithListeners(storeKey StoreKey, listeners []WriteListener) CacheWrap
 }
 
 type CacheWrapper interface {
@@ -271,9 +281,6 @@ type CacheWrapper interface {
 
 	// CacheWrapWithTrace branches a store with tracing enabled.
 	CacheWrapWithTrace(w io.Writer, tc TraceContext) CacheWrap
-
-	// CacheWrapWithListeners recursively wraps again with listening enabled
-	CacheWrapWithListeners(storeKey StoreKey, listeners []WriteListener) CacheWrap
 }
 
 func (cid CommitID) IsZero() bool {
@@ -355,6 +362,19 @@ func NewKVStoreKey(name string) *KVStoreKey {
 	return &KVStoreKey{
 		name: name,
 	}
+}
+
+// NewKVStoreKeys returns a map of new  pointers to KVStoreKey's.
+// The function will panic if there is a potential conflict in names (see `assertNoPrefix`
+// function for more details).
+func NewKVStoreKeys(names ...string) map[string]*KVStoreKey {
+	assertNoCommonPrefix(names)
+	keys := make(map[string]*KVStoreKey, len(names))
+	for _, n := range names {
+		keys[n] = NewKVStoreKey(n)
+	}
+
+	return keys
 }
 
 func (key *KVStoreKey) Name() string {

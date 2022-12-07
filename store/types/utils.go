@@ -2,6 +2,9 @@ package types
 
 import (
 	"bytes"
+	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
 )
@@ -41,21 +44,31 @@ func DiffKVStores(a KVStore, b KVStore, prefixesToSkip [][]byte) (kvAs, kvBs []k
 
 		if iterB.Valid() {
 			kvB = kv.Pair{Key: iterB.Key(), Value: iterB.Value()}
-
-			iterB.Next()
 		}
 
 		compareValue := true
 
 		for _, prefix := range prefixesToSkip {
 			// Skip value comparison if we matched a prefix
-			if bytes.HasPrefix(kvA.Key, prefix) || bytes.HasPrefix(kvB.Key, prefix) {
+			if bytes.HasPrefix(kvA.Key, prefix) {
 				compareValue = false
 				break
 			}
 		}
 
-		if compareValue && (!bytes.Equal(kvA.Key, kvB.Key) || !bytes.Equal(kvA.Value, kvB.Value)) {
+		if !compareValue {
+			// We're skipping this key due to an exclusion prefix.  If it's present in B, iterate past it.  If it's
+			// absent don't iterate.
+			if bytes.Equal(kvA.Key, kvB.Key) {
+				iterB.Next()
+			}
+			continue
+		}
+
+		// always iterate B when comparing
+		iterB.Next()
+
+		if !bytes.Equal(kvA.Key, kvB.Key) || !bytes.Equal(kvA.Value, kvB.Value) {
 			kvAs = append(kvAs, kvA)
 			kvBs = append(kvBs, kvB)
 		}
@@ -94,4 +107,17 @@ func PrefixEndBytes(prefix []byte) []byte {
 // range query such that the input would be included
 func InclusiveEndBytes(inclusiveBytes []byte) []byte {
 	return append(inclusiveBytes, byte(0x00))
+}
+
+// assertNoCommonPrefix will panic if there are two keys: k1 and k2 in keys, such that
+// k1 is a prefix of k2
+func assertNoCommonPrefix(keys []string) {
+	sorted := make([]string, len(keys))
+	copy(sorted, keys)
+	sort.Strings(sorted)
+	for i := 1; i < len(sorted); i++ {
+		if strings.HasPrefix(sorted[i], sorted[i-1]) {
+			panic(fmt.Sprint("Potential key collision between KVStores:", sorted[i], " - ", sorted[i-1]))
+		}
+	}
 }
