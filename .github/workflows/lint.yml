@@ -14,7 +14,7 @@ jobs:
     name: golangci-lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           # ci is set to go1.19 to match developer setups
           go-version: 1.19.3
