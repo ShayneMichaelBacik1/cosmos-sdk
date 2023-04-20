@@ -24,7 +24,7 @@ require (
 	github.com/cosmos/iavl v0.19.4
 	github.com/cosmos/ledger-cosmos-go v0.12.1
 	github.com/golang/mock v1.6.0
-	github.com/golang/protobuf v1.5.2
+	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
