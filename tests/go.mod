@@ -10,7 +10,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.47.0-alpha2
 	github.com/cosmos/gogoproto v1.4.3
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.3.1
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.37.0-rc2
