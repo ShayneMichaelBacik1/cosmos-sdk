@@ -12,7 +12,7 @@ require (
 	github.com/armon/go-metrics v0.4.1
 	github.com/bgentry/speakeasy v0.1.0
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2
-	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
+	github.com/chzyer/readline v1.5.1
 	github.com/cockroachdb/apd/v2 v2.0.2
 	github.com/confio/ics23/go v0.9.0
 	github.com/cosmos/btcutil v1.0.5
