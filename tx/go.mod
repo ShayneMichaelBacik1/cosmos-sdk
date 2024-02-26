@@ -6,10 +6,10 @@ require (
 	cosmossdk.io/api v0.2.5
 	cosmossdk.io/core v0.3.2
 	cosmossdk.io/math v1.0.0-beta.4
-	github.com/cosmos/cosmos-proto v1.0.0-beta.1
-	github.com/google/go-cmp v0.5.9
-	github.com/stretchr/testify v1.8.1
-	google.golang.org/protobuf v1.28.1
+	github.com/cosmos/cosmos-proto v1.0.0-beta.4
+	github.com/google/go-cmp v0.6.0
+	github.com/stretchr/testify v1.8.4
+	google.golang.org/protobuf v1.32.0
 )
 
 require (
