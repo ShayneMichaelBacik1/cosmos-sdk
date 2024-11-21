@@ -10,7 +10,7 @@ require (
 	cosmossdk.io/tools/rosetta v0.1.0
 	github.com/cosmos/cosmos-sdk v0.47.0-alpha2
 	github.com/golang/mock v1.6.0
-	github.com/spf13/cast v1.5.0
+	github.com/spf13/cast v1.7.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
