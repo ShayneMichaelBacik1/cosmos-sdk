@@ -56,7 +56,7 @@ require (
 	golang.org/x/exp v0.0.0-20221019170559-20944726eadf
 	google.golang.org/genproto v0.0.0-20221118155620-16455021b5e6
 	google.golang.org/grpc v1.51.0
-	google.golang.org/protobuf v1.28.1
+	google.golang.org/protobuf v1.36.1
 	pgregory.net/rapid v0.5.3
 	sigs.k8s.io/yaml v1.3.0
 )
