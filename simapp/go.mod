@@ -1,6 +1,7 @@
 module cosmossdk.io/simapp
 
 go 1.19
+toolchain go1.24.1
 
 require (
 	cosmossdk.io/api v0.2.5
@@ -16,7 +17,7 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.37.0-rc2
 	github.com/tendermint/tm-db v0.6.7
-	google.golang.org/protobuf v1.28.1
+	google.golang.org/protobuf v1.36.6
 )
 
 require (
